@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Intelligent Traffic Management & Emergency Vehicle Routing</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>AI-POWERED INTELLIGENT TRAFFIC MANAGEMENT</h1>
+                <p class="header-subtitle">Real-Time Four-Way Intersection with Dual-Sensor (Vision + Siren) Emergency
+                    Vehicle Routing</p>
+            </div>
+            <div class="header-status">
+                <span id="backendBadge" class="badge badge-warning">Backend: Checking...</span>
+                <span id="safetyBadge" class="badge badge-safe">Safety Guard: Active</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <nav>
+            <h3>System Navigation</h3>
+            <button class="nav-btn active" data-page="dashboard">
+                <span class="icon">&#9688;</span> 4-Way Intersection
+            </button>
+            <button class="nav-btn" data-page="monitoring">
+                <span class="icon">&#9737;</span> Live Monitoring
+            </button>
+            <button class="nav-btn" data-page="requests">
+                <span class="icon">&#9776;</span> Emergency Queue
+            </button>
+            <button class="nav-btn" data-page="history">
+                <span class="icon">&#9777;</span> Detection History
+            </button>
+            <button class="nav-btn" data-page="settings">
+                <span class="icon">&#9881;</span> Cycle Timings
+            </button>
+        </nav>
+
+        <main>
+            <!-- DASHBOARD / 4-WAY INTERSECTION -->
+            <section id="dashboard" class="page active">
+                <div class="section-header">
+                    <div>
+                        <h2>Four-Way Intelligent Intersection</h2>
+                        <p class="subtitle">Live Sensor Monitoring &amp; Perception with Strict Dual-Verification Emergency Traffic Signal Control.</p>
+                    </div>
+                    <div class="dashboard-controls-bar">
+                        <div class="road-select-wrap">
+                            <label for="approachRoadSelect">Approach Road:</label>
+                            <select id="approachRoadSelect" class="compact-select">
+                                <option value="NORTH" selected>NORTH</option>
+                                <option value="SOUTH">SOUTH</option>
+                                <option value="EAST">EAST</option>
+                                <option value="WEST">WEST</option>
+                            </select>
+                        </div>
+                        <button class="btn danger" id="resetEmergencyBtn">&#9888; RESET EMERGENCY</button>
+                    </div>
+                </div>
+
+                <!-- System Emergency Status Banner (Dynamic Real-Time State) -->
+                <div class="system-status-banner banner-idle" id="mainStatusBanner">
+                    ALL_RED_IDLE
+                </div>
+
+                <!-- SECTION: LIVE SENSOR MONITORING & PERCEPTION (TWO MAIN PANELS) -->
+                <div class="section-subheader">
+                    <h3>&#9670; Live Sensor Monitoring &amp; Perception</h3>
+                </div>
+
+                <div class="perception-two-panel-grid">
+                    <!-- PANEL A: CAMERA DETECTION -->
+                    <div class="panel sensor-perception-panel" id="cameraPerceptionPanel">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Panel A: Camera Detection</h3>
+                                <p class="panel-sub">Custom Trained YOLOv8 ONNX Vision Model</p>
+                            </div>
+                            <span class="badge" id="camStatusBadge">Camera Ready</span>
+                        </div>
+
+                        <!-- Simple Status Display -->
+                        <div class="sensor-status-box status-idle" id="cameraStatusDisplay">
+                            NO AMBULANCE DETECTED
+                        </div>
+
+                        <!-- Display camera feed or uploaded image with bounding box -->
+                        <div class="sensor-preview-container" id="cameraPreviewArea">
+                            <video id="webcamVideo" autoplay playsinline muted style="display: none;"></video>
+                            <canvas id="webcamCanvas" style="display: none;"></canvas>
+                            <div class="overlay-box" id="visionBoundingBox" style="display: none;">
+                                <span class="overlay-label">AMBULANCE</span>
+                            </div>
+                            <div class="preview-fallback" id="cameraFallback">
+                                <span class="preview-icon">&#128247;</span>
+                                <p class="preview-text" id="camPreviewText">Awaiting live webcam feed or uploaded ambulance image.</p>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="sensor-btn-group">
+                            <button class="btn" id="startCameraBtn">&#128247; Start Webcam</button>
+                            <button class="btn secondary" id="stopCameraBtn" style="display: none;">&#9209; Stop Webcam</button>
+                            <button class="btn" id="uploadAmbulanceBtn">&#128194; Upload Ambulance Image</button>
+                            <input type="file" id="ambulanceFileInput" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="imageUploadStatus" class="sensor-detail-status"></div>
+                    </div>
+
+                    <!-- PANEL B: SIREN DETECTION -->
+                    <div class="panel sensor-perception-panel" id="sirenPerceptionPanel">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Panel B: Siren Detection</h3>
+                                <p class="panel-sub">Custom Trained 1D-CNN ONNX Acoustic Classifier</p>
+                            </div>
+                            <span class="badge" id="audioStatusBadge">Acoustic Ready</span>
+                        </div>
+
+                        <!-- Simple Status Display -->
+                        <div class="sensor-status-box status-idle" id="sirenStatusDisplay">
+                            NO SIREN DETECTED
+                        </div>
+
+                        <!-- Display audio detection result & waveform -->
+                        <div class="sensor-preview-container audio-wave-container" id="sirenPreviewArea">
+                            <div class="wave-bars" id="waveBars">
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <div class="preview-fallback" id="sirenFallback">
+                                <span class="preview-icon">&#127908;</span>
+                                <p class="preview-text" id="audioPreviewText">Awaiting live microphone input or uploaded siren audio (MP3 / WAV).</p>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="sensor-btn-group">
+                            <button class="btn" id="startMicBtn">&#127908; Start Microphone</button>
+                            <button class="btn secondary" id="stopMicBtn" style="display: none;">&#9209; Stop Microphone</button>
+                            <button class="btn" id="uploadSirenBtn">&#128194; Upload Siren Audio</button>
+                            <input type="file" id="sirenFileInput" accept="audio/*,.wav,.mp3" style="display: none;">
+                        </div>
+                        <div id="audioUploadStatus" class="sensor-detail-status"></div>
+                    </div>
+                </div>
+
+                <!-- APPROACH SIGNAL HEADS (NORTH, SOUTH, EAST, WEST) -->
+                <div class="panel" style="margin-top: 24px;">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Approach Signal Heads</h3>
+                            <p class="panel-sub">Intersection Status: Confirmed emergency grants GREEN only to verified approach. Non-emergency approaches held at RED.</p>
+                        </div>
+                        <span class="badge badge-safe" id="safetyBadgeInterlock">Strict Interlock Active (0 Conflicting Greens)</span>
+                    </div>
+
+                    <div class="signals-grid">
+                        <div class="signal-card" id="cardNorth">
+                            <h4>North Approach</h4>
+                            <div class="traffic-light" id="lightNorth">
+                                <span class="red active"></span>
+                                <span class="yellow"></span>
+                                <span class="green"></span>
+                            </div>
+                            <p class="signal-state-label text-danger" id="stateNorth">RED</p>
+                            <span class="badge badge-muted" id="badgeNorth">Holding</span>
+                        </div>
+
+                        <div class="signal-card" id="cardSouth">
+                            <h4>South Approach</h4>
+                            <div class="traffic-light" id="lightSouth">
+                                <span class="red active"></span>
+                                <span class="yellow"></span>
+                                <span class="green"></span>
+                            </div>
+                            <p class="signal-state-label text-danger" id="stateSouth">RED</p>
+                            <span class="badge badge-muted" id="badgeSouth">Holding</span>
+                        </div>
+
+                        <div class="signal-card" id="cardEast">
+                            <h4>East Approach</h4>
+                            <div class="traffic-light" id="lightEast">
+                                <span class="red active"></span>
+                                <span class="yellow"></span>
+                                <span class="green"></span>
+                            </div>
+                            <p class="signal-state-label text-danger" id="stateEast">RED</p>
+                            <span class="badge badge-muted" id="badgeEast">Holding</span>
+                        </div>
+
+                        <div class="signal-card" id="cardWest">
+                            <h4>West Approach</h4>
+                            <div class="traffic-light" id="lightWest">
+                                <span class="red active"></span>
+                                <span class="yellow"></span>
+                                <span class="green"></span>
+                            </div>
+                            <p class="signal-state-label text-danger" id="stateWest">RED</p>
+                            <span class="badge badge-muted" id="badgeWest">Holding</span>
+                        </div>
+                    </div>
+
+                    <div class="safety-summary-box" style="margin-top: 16px;">
+                        <h4>Strict Dual Verification Safety Guard</h4>
+                        <ul>
+                            <li>&#10004; <strong>Emergency Green Granted:</strong> Only when Vision &amp; Siren both verify with &ge; 70% confidence on SAME ROAD within 3000 ms.</li>
+                            <li>&#10004; <strong>Single Sensor Hold:</strong> Camera alone or Siren alone keeps ALL traffic signals RED.</li>
+                            <li>&#10004; <strong>Road Mismatch Rejection:</strong> Conflicting approach directions immediately trip all signals to RED.</li>
+                            <li>&#10004; <strong>Reset Emergency:</strong> Instantly returns all 4 approach signals to RED (ALL_RED_IDLE).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recent History Table -->
+                <div class="panel">
+                    <h3>Live Signal & Event History</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Timestamp</th>
+                                    <th>Event Type</th>
+                                    <th>Active Road</th>
+                                    <th>Signal Color</th>
+                                    <th>Emergency Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentHistory">
+                                <tr>
+                                    <td colspan="6" class="empty">Cycle active. Telemetry logging...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LIVE MONITORING -->
+            <section id="monitoring" class="page">
+                <h2>Live Sensor Monitoring & Perception</h2>
+                <p class="subtitle">Multi-modal perception combining Camera Ambulance Vision and Microphone Siren Audio.
+                </p>
+
+                <div class="content-grid">
+                    <div class="panel">
+                        <h3>Ambulance Camera Vision</h3>
+                        <div class="sensor-box" id="cameraBox">
+                            <div class="sensor-header">
+                                <span class="sensor-tag">OpenCV Java + ONNX Runtime</span>
+                                <span class="sensor-status" id="camStatusBadge">Simulation Ready</span>
+                            </div>
+                            <div class="sensor-preview" id="camPreviewArea">
+                                <video id="webcamVideo" autoplay playsinline muted
+                                    style="width: 100%; height: 160px; object-fit: cover; display: none; border-radius: 6px; margin-bottom: 8px;"></video>
+                                <canvas id="webcamCanvas" style="display: none;"></canvas>
+                                <div class="overlay-box" id="visionBoundingBox" style="display: none;">
+                                    <span class="overlay-label">AMBULANCE (conf: 0.94)</span>
+                                </div>
+                                <p class="preview-text" id="camPreviewText">Awaiting live video feed or uploaded image.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="sensor-btn-group"
+                            style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn" id="startCameraBtn">&#128247; Start Camera</button>
+                            <button class="btn secondary" id="stopCameraBtn">&#9209; Stop Camera</button>
+                            <select id="uploadImageRoadSelect" class="compact-select">
+                                <option value="NORTH">Approach: NORTH</option>
+                                <option value="SOUTH">Approach: SOUTH</option>
+                                <option value="EAST">Approach: EAST</option>
+                                <option value="WEST">Approach: WEST</option>
+                            </select>
+                            <button class="btn" id="uploadAmbulanceBtn">&#128194; Upload Ambulance Image</button>
+                            <input type="file" id="ambulanceFileInput" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="imageUploadStatus"
+                            style="font-size: 12px; margin-top: 6px; color: var(--text-secondary);"></div>
+                        <p class="help">Vision uses trained YOLOv8 ONNX model to detect ambulance livery and map road
+                            ROI.</p>
+                    </div>
+
+                    <div class="panel">
+                        <h3>Siren Acoustic Classification</h3>
+                        <div class="sensor-box" id="audioBox">
+                            <div class="sensor-header">
+                                <span class="sensor-tag">1D CNN + ONNX Audio</span>
+                                <span class="sensor-status" id="audioStatusBadge">Acoustic Standby</span>
+                            </div>
+                            <div class="sensor-preview audio-wave-preview">
+                                <div class="wave-bars" id="waveBars">
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <p class="preview-text" id="audioPreviewText">Microphone input ready. Continuous
+                                    sliding-window capture.</p>
+                            </div>
+                        </div>
+                        <div class="sensor-btn-group"
+                            style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn" id="startMicBtn">&#127908; Start Microphone</button>
+                            <button class="btn secondary" id="stopMicBtn">&#9209; Stop Microphone</button>
+                            <select id="uploadAudioRoadSelect" class="compact-select">
+                                <option value="NORTH">Approach: NORTH</option>
+                                <option value="SOUTH">Approach: SOUTH</option>
+                                <option value="EAST">Approach: EAST</option>
+                                <option value="WEST">Approach: WEST</option>
+                            </select>
+                            <button class="btn" id="uploadSirenBtn">&#128194; Upload Siren Audio</button>
+                            <input type="file" id="sirenFileInput" accept="audio/*,.wav,.mp3" style="display: none;">
+                        </div>
+                        <div id="audioUploadStatus"
+                            style="font-size: 12px; margin-top: 6px; color: var(--text-secondary);"></div>
+                        <p class="help">Classifies emergency siren (wail/yelp/hi-lo) vs car horn & ambient street noise
+                            using trained 1D-CNN.</p>
+                    </div>
+                </div>
+
+
+                <div class="panel">
+                    <h3>Same-Road Dual Verification Engine Status</h3>
+                    <div class="fusion-card">
+                        <p>Emergency traffic preemption is granted <strong>ONLY</strong> when both sensors confirm on
+                            the <strong>SAME ROAD</strong> within the configured time window (&Delta;t &le; 3.0s).</p>
+                        <div id="fusionResult" class="result">Waiting for dual coincidence.</div>
+                    </div>
+
+                    <h4 style="margin-top: 20px; font-size: 14px;">Evaluation Scenario Test Suite (Click to Execute):
+                    </h4>
+                    <div class="scenario-grid">
+                        <div class="scenario-card">
+                            <div>
+                                <h4>1. Same-Road Dual Confirmation</h4>
+                                <p>Camera + Siren confirmed on NORTH (&Delta;t = 200ms). Both confidences &ge; 90%.</p>
+                            </div>
+                            <button class="btn danger" id="scenSameRoadBtn">&#10004; Trigger Dual Match</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>2. Road Mismatch Anomaly</h4>
+                                <p>Camera sees ambulance on NORTH, but Siren heard on EAST. Must reject!</p>
+                            </div>
+                            <button class="btn secondary" id="scenMismatchBtn">&#9888; Test Road Mismatch</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>3. Camera Only (Silent)</h4>
+                                <p>Camera sees ambulance on NORTH, but no acoustic siren is present. Must hold.</p>
+                            </div>
+                            <button class="btn secondary" id="scenCamOnlyBtn">&#128247; Test Camera Only</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>4. Siren Only (Ghost Sound)</h4>
+                                <p>Microphone detects siren on SOUTH, but no vehicle on camera. Must hold.</p>
+                            </div>
+                            <button class="btn secondary" id="scenAudioOnlyBtn">&#128266; Test Siren Only</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>5. Time Window Exceeded</h4>
+                                <p>Camera detects at t=0, Siren arrives at t=4.5s (&Delta;t &gt; 3.0s). Must reject.</p>
+                            </div>
+                            <button class="btn secondary" id="scenTimeExceedBtn">&#9200; Test Window Exceeded</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>6. Low Sensor Confidence</h4>
+                                <p>Detection confidence 0.52 is below 0.70 threshold. Must reject.</p>
+                            </div>
+                            <button class="btn secondary" id="scenLowConfBtn">&#10060; Test Low Confidence</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>7. Multi-Ambulance Priority</h4>
+                                <p>Enqueues 2 simultaneous ambulances: Priority 1 (Critical) vs Priority 2 (High).</p>
+                            </div>
+                            <button class="btn" id="scenMultiQueueBtn">&#128657;&#128657; Test Priority Queue</button>
+                        </div>
+
+                        <div class="scenario-card">
+                            <div>
+                                <h4>8. Ambulance Cleared Intersection</h4>
+                                <p>Ambulance crosses exit line. Initiates All-Red post-clearance & resumes.</p>
+                            </div>
+                            <button class="btn secondary" id="scenClearExitBtn">&#10004; Mark Cleared Exit</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EMERGENCY QUEUE -->
+            <section id="requests" class="page">
+                <h2>Emergency Vehicle Priority Queue</h2>
+                <p class="subtitle">Real-time Java PriorityQueue managing multiple approaching emergency vehicles.</p>
+
+                <div class="panel">
+                    <h3>Submit Manual Emergency Request</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="ambulanceId">Ambulance Identifier</label>
+                            <input id="ambulanceId" placeholder="e.g. AMB-108">
+                        </div>
+                        <div>
+                            <label for="direction">Approaching Road</label>
+                            <select id="direction">
+                                <option value="NORTH">NORTH</option>
+                                <option value="SOUTH">SOUTH</option>
+                                <option value="EAST">EAST</option>
+                                <option value="WEST">WEST</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="priority">Medical Priority Level</label>
+                            <select id="priority">
+                                <option value="1">1 - Critical (Trauma / Cardiac)</option>
+                                <option value="2">2 - High (Emergency Response)</option>
+                                <option value="3">3 - Normal (Patient Transfer)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="addRequestBtn">Enqueue Emergency Vehicle</button>
+                </div>
+
+                <div class="panel">
+                    <h3>Pending Emergency Queue (<span id="pendingCount">0</span> vehicles)</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ambulance ID</th>
+                                    <th>Approach Road</th>
+                                    <th>Priority</th>
+                                    <th>Arrival Order</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queueTable">
+                                <tr>
+                                    <td colspan="5" class="empty">Emergency queue is empty.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn" id="processQueueBtn">Dispatch Highest Priority</button>
+                    <button class="btn secondary" id="clearQueueBtn">Clear Queue</button>
+                </div>
+            </section>
+
+            <!-- DETECTION HISTORY & DATABASE AUDIT -->
+            <section id="history" class="page">
+                <div class="section-header">
+                    <div>
+                        <h2>MySQL Database History &amp; Jury Audit</h2>
+                        <p class="subtitle">Live records from MySQL database (<code>ambulance_db</code>) across all four core perception &amp; control tables.</p>
+                    </div>
+                    <button class="btn" id="refreshDbHistoryBtn">&#128260; Refresh All Tables from MySQL</button>
+                </div>
+
+                <!-- Live Database Counters -->
+                <div class="metrics-grid" style="margin-bottom: 20px;">
+                    <div class="metric-card">
+                        <span class="metric-label">Ambulance Detections</span>
+                        <span class="metric-value" id="dbCountAmb">0</span>
+                        <span class="metric-sub">Table: ambulance_detection</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Siren Detections</span>
+                        <span class="metric-value" id="dbCountSiren">0</span>
+                        <span class="metric-sub">Table: siren_detection</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Emergency Confirmations</span>
+                        <span class="metric-value" id="dbCountEmergency">0</span>
+                        <span class="metric-sub">Table: emergency_history</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Emergency Resets</span>
+                        <span class="metric-value" id="dbCountResets">0</span>
+                        <span class="metric-sub">Table: emergency_reset_history</span>
+                    </div>
+                </div>
+
+                <!-- Table 1: Ambulance Detection Table -->
+                <div class="panel" style="margin-bottom: 20px;">
+                    <div class="panel-header">
+                        <h3>1. Ambulance Detection Table (<code>ambulance_detection</code>)</h3>
+                        <span class="badge">Perception Vision</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Detection ID</th>
+                                    <th>Image Filename</th>
+                                    <th>Ambulance Detected</th>
+                                    <th>Confidence</th>
+                                    <th>Approach Road</th>
+                                    <th>Detection Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableAmbulance">
+                                <tr>
+                                    <td colspan="6" class="empty">Loading records from MySQL...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 2: Siren Detection Table -->
+                <div class="panel" style="margin-bottom: 20px;">
+                    <div class="panel-header">
+                        <h3>2. Siren Detection Table (<code>siren_detection</code>)</h3>
+                        <span class="badge">Acoustic Classification</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Detection ID</th>
+                                    <th>Audio Filename</th>
+                                    <th>Siren Detected</th>
+                                    <th>Confidence</th>
+                                    <th>Approach Road</th>
+                                    <th>Detection Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableSiren">
+                                <tr>
+                                    <td colspan="6" class="empty">Loading records from MySQL...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 3: Emergency History Table -->
+                <div class="panel" style="margin-bottom: 20px;">
+                    <div class="panel-header">
+                        <h3>3. Emergency History Table (<code>emergency_history</code>)</h3>
+                        <span class="badge">Dual Verification Lifecycle</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Emergency ID</th>
+                                    <th>Amb ID</th>
+                                    <th>Siren ID</th>
+                                    <th>Selected Road</th>
+                                    <th>Amb Conf</th>
+                                    <th>Siren Conf</th>
+                                    <th>Emergency Status</th>
+                                    <th>Signal Status</th>
+                                    <th>Start Time</th>
+                                    <th>Confirmed Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableEmergency">
+                                <tr>
+                                    <td colspan="10" class="empty">Loading records from MySQL...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table 4: Emergency Reset History Table -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>4. Emergency Reset History Table (<code>emergency_reset_history</code>)</h3>
+                        <span class="badge">Fail-Safe Reset Audit</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Reset ID</th>
+                                    <th>Emergency ID</th>
+                                    <th>Selected Road</th>
+                                    <th>Previous Signal Status</th>
+                                    <th>Reset Status</th>
+                                    <th>Reset Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableReset">
+                                <tr>
+                                    <td colspan="6" class="empty">Loading records from MySQL...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CYCLE TIMING SETTINGS -->
+            <section id="settings" class="page">
+                <h2>Prototype Simulation Timings</h2>
+                <p class="subtitle">Configure signal interval parameters. These are prototype simulation values, not
+                    universal standards.</p>
+
+                <div class="panel">
+                    <h3>Adjust Phase Intervals</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="cfgGreen">Green Light Interval (seconds)</label>
+                            <input type="number" id="cfgGreen" value="8" min="3" max="60">
+                            <p class="help">Duration each road receives uninterrupted green.</p>
+                        </div>
+                        <div>
+                            <label for="cfgYellow">Yellow Light Interval (seconds)</label>
+                            <input type="number" id="cfgYellow" value="3" min="2" max="10">
+                            <p class="help">Safe deceleration window before red.</p>
+                        </div>
+                        <div>
+                            <label for="cfgAllRed">All-Red Clearance (seconds)</label>
+                            <input type="number" id="cfgAllRed" value="2" min="1" max="10">
+                            <p class="help">Buffer where all 4 approaches remain RED.</p>
+                        </div>
+                    </div>
+                    <button class="btn" id="saveTimingsBtn">Update Backend Timings</button>
+                    <p id="timingMsg" class="help"></p>
+                </div>
+            </section>
+
+            <footer>
+                AI-Powered Intelligent Traffic Management & Emergency Vehicle Routing System &bull; Java 21 &amp; Spring
+                Boot Backend &bull; Non-Blocking State Machine
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

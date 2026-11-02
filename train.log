@@ -1,0 +1,34 @@
+Failed to find real location of C:\Users\shri\AppData\Local\Programs\Python\Python313\python.exe
+===============================================================================
+      TRAINING SIREN CLASSIFIER FROM SCRATCH (CPU, RANDOM INITIALIZATION)
+===============================================================================
+Dataset summary: Train=180, Val=60, Test=50 samples
+Epoch 1/6 -> Train Loss: 0.3891, Acc: 87.8%, F1: 0.894 | Val Loss: 1.4162, Val Acc: 50.0%, Val Prec: 0.000, Val Rec: 0.000, Val F1: 0.000
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 0.000)
+Epoch 2/6 -> Train Loss: 0.0869, Acc: 97.2%, F1: 0.971 | Val Loss: 0.9242, Val Acc: 75.0%, Val Prec: 1.000, Val Rec: 0.500, Val F1: 0.667
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 0.667)
+Epoch 3/6 -> Train Loss: 0.0435, Acc: 98.3%, F1: 0.983 | Val Loss: 0.0029, Val Acc: 100.0%, Val Prec: 1.000, Val Rec: 1.000, Val F1: 1.000
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 1.000)
+Epoch 4/6 -> Train Loss: 0.3010, Acc: 96.1%, F1: 0.963 | Val Loss: 0.0001, Val Acc: 100.0%, Val Prec: 1.000, Val Rec: 1.000, Val F1: 1.000
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 1.000)
+Epoch 5/6 -> Train Loss: 0.0168, Acc: 99.4%, F1: 0.994 | Val Loss: 0.0000, Val Acc: 100.0%, Val Prec: 1.000, Val Rec: 1.000, Val F1: 1.000
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 1.000)
+Epoch 6/6 -> Train Loss: 0.0016, Acc: 100.0%, F1: 1.000 | Val Loss: 0.0000, Val Acc: 100.0%, Val Prec: 1.000, Val Rec: 1.000, Val F1: 1.000
+  --> Saved new best checkpoint to C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_model_best.pt (F1: 1.000)
+
+[OK] Training completed in 20.4 seconds.
+
+-------------------------------------------------------------------------------
+TEST SET EVALUATION METRICS (Siren Audio Classifier):
+  - Accuracy:  100.00%
+  - Precision: 1.0000
+  - Recall:    1.0000
+  - F1-Score:  1.0000
+-------------------------------------------------------------------------------
+
+Exporting trained PyTorch 1D-CNN directly to ONNX format...
+C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\train_siren_model_from_scratch.py:211: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(
+[OK] Saved verified trained ONNX model (IR-8): C:\Users\shri\Downloads\traffic-routing-prototype\training\siren\models\siren_classifier.onnx
+[SUCCESS] Deployed trained ONNX model to: C:\Users\shri\Downloads\traffic-routing-prototype\models\audio\siren_classifier.onnx
+[SUCCESS] Deployed trained ONNX model to: C:\Users\shri\Downloads\traffic-routing-prototype\traffic-backend\traffic-backend\models\audio\siren_classifier.onnx
